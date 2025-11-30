@@ -13,8 +13,11 @@ class MediaUtils {
 
   /// Определить тип медиа по расширению
   static MediaType getMediaType(String filePath) {
-    final extension = path.extension(filePath).toLowerCase().replaceAll('.', '');
-    
+    final extension = path
+        .extension(filePath)
+        .toLowerCase()
+        .replaceAll('.', '');
+
     if (AppConstants.supportedImageFormats.contains(extension)) {
       return MediaType.image;
     } else if (AppConstants.supportedVideoFormats.contains(extension)) {
@@ -26,13 +29,19 @@ class MediaUtils {
 
   /// Проверить, является ли файл изображением
   static bool isImage(String filePath) {
-    final extension = path.extension(filePath).toLowerCase().replaceAll('.', '');
+    final extension = path
+        .extension(filePath)
+        .toLowerCase()
+        .replaceAll('.', '');
     return AppConstants.supportedImageFormats.contains(extension);
   }
 
   /// Проверить, является ли файл видео
   static bool isVideo(String filePath) {
-    final extension = path.extension(filePath).toLowerCase().replaceAll('.', '');
+    final extension = path
+        .extension(filePath)
+        .toLowerCase()
+        .replaceAll('.', '');
     return AppConstants.supportedVideoFormats.contains(extension);
   }
 
@@ -57,7 +66,7 @@ class MediaUtils {
   static Future<String> getFileSizeFormatted(String filePath) async {
     final file = File(filePath);
     final bytes = await file.length();
-    
+
     if (bytes < 1024) {
       return '$bytes B';
     } else if (bytes < 1024 * 1024) {
@@ -81,11 +90,11 @@ class MediaUtils {
     try {
       final file = File(filePath);
       final bytes = await file.readAsBytes();
-      
+
       // Декодируем изображение
       final image = img.decodeImage(bytes);
       if (image == null) return null;
-      
+
       // Изменяем размер, если указано
       img.Image resized = image;
       if (maxWidth != null || maxHeight != null) {
@@ -96,7 +105,7 @@ class MediaUtils {
           interpolation: img.Interpolation.linear,
         );
       }
-      
+
       // Сжимаем
       final compressed = img.encodeJpg(resized, quality: quality);
       return Uint8List.fromList(compressed);
@@ -114,13 +123,13 @@ class MediaUtils {
     try {
       final file = File(filePath);
       final bytes = await file.readAsBytes();
-      
+
       final image = img.decodeImage(bytes);
       if (image == null) return null;
-      
+
       // Создаем квадратную миниатюру
       final thumbnail = img.copyResizeCropSquare(image, size: size);
-      
+
       final encoded = img.encodeJpg(thumbnail, quality: 80);
       return Uint8List.fromList(encoded);
     } catch (e) {
@@ -134,10 +143,10 @@ class MediaUtils {
     try {
       final file = File(filePath);
       final bytes = await file.readAsBytes();
-      
+
       final image = img.decodeImage(bytes);
       if (image == null) return null;
-      
+
       return Size(image.width.toDouble(), image.height.toDouble());
     } catch (e) {
       debugPrint('❌ Error getting image dimensions: $e');
@@ -165,7 +174,7 @@ class MediaUtils {
     final extension = path.extension(originalPath);
     final timestamp = DateTime.now().millisecondsSinceEpoch;
     final random = DateTime.now().microsecond;
-    
+
     return 'media_${timestamp}_$random$extension';
   }
 
@@ -182,7 +191,7 @@ class MediaUtils {
   /// Получить MIME тип файла
   static String getMimeType(String filePath) {
     final extension = path.extension(filePath).toLowerCase();
-    
+
     switch (extension) {
       // Images
       case '.jpg':
@@ -194,7 +203,7 @@ class MediaUtils {
         return 'image/gif';
       case '.webp':
         return 'image/webp';
-      
+
       // Videos
       case '.mp4':
         return 'video/mp4';
@@ -204,7 +213,7 @@ class MediaUtils {
         return 'video/x-msvideo';
       case '.mkv':
         return 'video/x-matroska';
-      
+
       default:
         return 'application/octet-stream';
     }
@@ -269,10 +278,7 @@ class MediaUtils {
     // Проверка существования файла
     final file = File(filePath);
     if (!await file.exists()) {
-      return ValidationResult(
-        isValid: false,
-        error: 'Файл не найден',
-      );
+      return ValidationResult(isValid: false, error: 'Файл не найден');
     }
 
     // Проверка типа файла
@@ -290,7 +296,8 @@ class MediaUtils {
       final sizeMB = await getFileSizeMB(filePath);
       return ValidationResult(
         isValid: false,
-        error: 'Файл слишком большой (${sizeMB.toStringAsFixed(1)} MB). Максимум: ${AppConstants.maxGalleryItemSizeMB} MB',
+        error:
+            'Файл слишком большой (${sizeMB.toStringAsFixed(1)} MB). Максимум: ${AppConstants.maxGalleryItemSizeMB} MB',
       );
     }
 
@@ -303,8 +310,5 @@ class ValidationResult {
   final bool isValid;
   final String? error;
 
-  ValidationResult({
-    required this.isValid,
-    this.error,
-  });
+  ValidationResult({required this.isValid, this.error});
 }
